@@ -1,0 +1,30 @@
+# Imports mock data
+import "tfplan/v2" as tfplan
+
+
+s3_buckets = filter tfplan.resource_changes as _, rc {
+    rc.type is "aws_s3_bucket" and
+        (rc.change.actions contains "create" or rc.change.actions is ["update"])
+}
+
+
+mandatory_tags = [
+    "Name",
+]
+
+
+mandatory_bucket_tags = rule {
+    all s3_buckets as _, bucket {
+        all mandatory_tags as mt {
+            bucket.change.after.tags contains mt
+        }
+    }
+}
+
+#
+
+# Main rule that requires other rules to be true
+main = rule {
+    (mandatory_bucket_tags) else true
+}
+

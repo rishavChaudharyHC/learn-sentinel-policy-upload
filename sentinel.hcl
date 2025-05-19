@@ -1,3 +1,3 @@
-policy "restrict-aws-instances-type-and-tag" {
+policy "restrict-aws-s3-tags" {
   enforcement_level = "hard-mandatory"
 }
